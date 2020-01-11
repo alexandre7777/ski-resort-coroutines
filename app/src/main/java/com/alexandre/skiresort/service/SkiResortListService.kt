@@ -1,8 +1,7 @@
 package com.alexandre.skiresort.service
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.alexandre.skiresort.BuildConfig
 import com.alexandre.skiresort.service.model.SkiResort
 import okhttp3.OkHttpClient

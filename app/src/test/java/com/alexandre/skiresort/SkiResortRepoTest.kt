@@ -1,7 +1,7 @@
 package com.alexandre.skiresort
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.arch.lifecycle.*
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.alexandre.skiresort.data.SkiResortRepo
 import com.alexandre.skiresort.db.SkiResortDao
 import com.alexandre.skiresort.db.model.SkiResort
