@@ -1,6 +1,7 @@
 package com.alexandre.skiresort.data
 
-import android.arch.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.alexandre.skiresort.db.SkiResortDao
 import com.alexandre.skiresort.db.model.SkiResort
 import com.alexandre.skiresort.domain.model.toDbModel
@@ -16,11 +17,11 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
 
         val result = MediatorLiveData<List<com.alexandre.skiresort.domain.model.SkiResort>>()
 
-        val liveDataService = requestSkiResort(skiResortListService, {skiResorts ->
+        val liveDataService = requestSkiResort(skiResortListService, { skiResorts ->
             ioExecutor.execute {
                 skiResortDao.insertAll(prepareInsertWithFavStatus(toDbModel(skiResorts)))
             }
-        }, {error ->
+        }, { error ->
 
         })
 
@@ -34,7 +35,7 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
                     result.value = toViewModel(it)
                 }
             }
-                    //combineLatestData(liveData1, liveData2)
+            //combineLatestData(liveData1, liveData2)
         }
         result.addSource(liveDataDb) { value ->
             value?.let {
