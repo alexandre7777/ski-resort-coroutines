@@ -27,10 +27,11 @@ task clean(type: Delete) {
 }
 
 ext {
-    roomVersion = "2.2.3"
-    archComponentsVersion = "2.1.0"
-    retrofitVersion = "2.4.0"
+    roomVersion = "2.2.0"
+    archComponentsVersion = "2.2.0-rc03"
+    retrofitVersion = "2.6.0"
     okhttpLoggingInterceptorVersion = "3.9.0"
     supportLibVersion = "29.0.0"
     expressoVersion = "3.2.0"
+    coroutinesVersion = "1.3.2"
 }
