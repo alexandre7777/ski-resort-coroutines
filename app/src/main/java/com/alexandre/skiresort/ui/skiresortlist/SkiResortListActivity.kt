@@ -1,10 +1,11 @@
 package com.alexandre.skiresort.ui.skiresortlist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alexandre.skiresort.Injection.provideViewModelFactorySkiResortList
 import com.alexandre.skiresort.R
@@ -23,7 +24,7 @@ class SkiResortListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ski_resort_list)
 
-        viewModelSkiResortList = ViewModelProviders.of(this, provideViewModelFactorySkiResortList(this))
+        viewModelSkiResortList = ViewModelProvider(this, provideViewModelFactorySkiResortList(this))
                 .get(SkiResortListViewModel::class.java)
 
         initAdapter()
