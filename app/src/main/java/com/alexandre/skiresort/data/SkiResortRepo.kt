@@ -12,8 +12,8 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
         emit(emptyList())
         try {
             val networkResult = skiResortListService.getSkiResorts()
-            skiResortDao.insertAll(prepareInsertWithFavStatus(toDbModel(networkResult)))
             emit(networkResult)
+            skiResortDao.insertAll(prepareInsertWithFavStatus(toDbModel(networkResult)))
         } catch (throwable: Throwable) {
 
         }

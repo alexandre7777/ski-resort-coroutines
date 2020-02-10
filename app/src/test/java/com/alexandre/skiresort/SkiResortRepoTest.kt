@@ -1,74 +1,64 @@
 package com.alexandre.skiresort
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.MutableLiveData
 import com.alexandre.skiresort.data.SkiResortRepo
 import com.alexandre.skiresort.db.SkiResortDao
 import com.alexandre.skiresort.db.model.SkiResort
 import com.alexandre.skiresort.service.SkiResortListService
 import io.mockk.*
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
-import java.util.concurrent.Executors
-import retrofit2.mock.MockRetrofit
-import retrofit2.mock.NetworkBehavior
-import retrofit2.Retrofit
-import retrofit2.mock.BehaviorDelegate
-import java.util.concurrent.TimeUnit
-
 
 class SkiResortRepoTest {
 
     private val skiResortDao = mockkClass(SkiResortDao::class)
-    private val liveDataDb = MutableLiveData<List<SkiResort>>()
-    private val skiResortListService = spyk(MockSkiResortListService(createRetrofitDelegate()))
+    private val skiResortListService = mockkClass(SkiResortListService::class)
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
 
-    @Before
-    fun prepareDao() {
+    @Test
+    fun `should respond offline data then mixed data when service and db are valid`() = runBlockingTest {
+        // Given
         every {
             skiResortDao.getAllSkiResorts()
-        } returns liveDataDb
+        } returns flowOf(createExpectedDbData())
 
-        every {
-            skiResortDao.isFav(1)
-        } returns true
+        coEvery {
+            skiResortListService.getSkiResorts()
+        } returns createExpectedRemoteData()
 
-        every {
+        coEvery {
             skiResortDao.insertAll(createExpectedDbData())
         } returns Unit
+
+        // When
+        val result = SkiResortRepo(skiResortListService, skiResortDao).getAllSkiResorts().take(2).toList()
+
+        // Then
+        assertEquals(createExpectedResultFirst(), result[0])
+        assertEquals(createExpectedResultSecond(), result[1])
     }
 
-    private fun createRetrofitDelegate(): BehaviorDelegate<SkiResortListService> {
-        val retrofit = Retrofit.Builder()
-                .baseUrl("https://firebasestorage.googleapis.com/")
-                .build()
+    private fun createExpectedResultFirst() =
+            listOf(com.alexandre.skiresort.domain.model.SkiResort(
+                    1,
+                    "Val d'Isère",
+                    "France",
+                    "Alps",
+                    300,
+                    83,
+                    96,
+                    true,
+                    null))
 
-        val behavior = NetworkBehavior.create()
-        val mockRetrofit = MockRetrofit.Builder(retrofit)
-                .networkBehavior(behavior)
-                .build()
-
-        behavior.setDelay(0, TimeUnit.MILLISECONDS)
-
-        return mockRetrofit.create(SkiResortListService::class.java)
-    }
-
-    @Test
-    fun testMediatorLiveData() {
-        liveDataDb.postValue(createExpectedDbData())
-
-        SkiResortRepo(skiResortListService, skiResortDao, Executors.newSingleThreadExecutor()).getAllSkiResorts().observeForever {
-            assertEquals(createExpectedResult(), it)
-        }
-    }
-
-    private fun createExpectedResult() =
+    private fun createExpectedResultSecond() =
             listOf(com.alexandre.skiresort.domain.model.SkiResort(
                     1,
                     "Val d'Isère",
@@ -90,4 +80,14 @@ class SkiResortRepoTest {
                     83,
                     96,
                     true))
+
+    private fun createExpectedRemoteData() =
+            listOf(com.alexandre.skiresort.service.model.SkiResort(1,
+                    "Val d'Isère",
+                    "France",
+                    "Alps",
+                    300,
+                    83,
+                    96,
+                    "sunny"))
 }
