@@ -1,15 +1,17 @@
 package com.alexandre.skiresort.domain.model
 
 import com.alexandre.skiresort.R
+import com.alexandre.skiresort.db.model.SkiResortLocalModel
+import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 
-fun toViewModel(skiResortListService: List<com.alexandre.skiresort.service.model.SkiResort>,
-                skiResortListDb: List<com.alexandre.skiresort.db.model.SkiResort>):
-        List<SkiResort> {
-    return if (skiResortListService.isEmpty()) {
-        toViewModelFromDb(skiResortListDb)
+fun toViewModel(skiResortRemoteModelListService: List<SkiResortRemoteModel>,
+                skiResortLocalModelListDb: List<SkiResortLocalModel>):
+        List<SkiResortUiModel> {
+    return if (skiResortRemoteModelListService.isEmpty()) {
+        toViewModelFromDb(skiResortLocalModelListDb)
     } else {
-        skiResortListService.map {
-            SkiResort(
+        skiResortRemoteModelListService.map {
+            SkiResortUiModel(
                     it.skiResortId,
                     it.name,
                     it.country,
@@ -17,15 +19,15 @@ fun toViewModel(skiResortListService: List<com.alexandre.skiresort.service.model
                     it.slopeKm,
                     it.lifts,
                     it.slopes,
-                    getFavFromList(skiResortListDb, it.skiResortId),
+                    getFavFromList(skiResortLocalModelListDb, it.skiResortId),
                     weather = getDrawableForString(it.weather)
             )
         }
     }
 }
 
-fun getFavFromList(skiResortListDb: List<com.alexandre.skiresort.db.model.SkiResort>, id: Int): Boolean {
-    val mutableIterator = skiResortListDb.iterator()
+fun getFavFromList(skiResortLocalModelListDb: List<SkiResortLocalModel>, id: Int): Boolean {
+    val mutableIterator = skiResortLocalModelListDb.iterator()
 
     // iterator() extension is called here
     for (skiResort in mutableIterator) {
@@ -36,10 +38,10 @@ fun getFavFromList(skiResortListDb: List<com.alexandre.skiresort.db.model.SkiRes
 }
 
 
-fun toDbModel(skiResortList: List<com.alexandre.skiresort.service.model.SkiResort>):
-        List<com.alexandre.skiresort.db.model.SkiResort> {
-    return skiResortList.map {
-        com.alexandre.skiresort.db.model.SkiResort(
+fun toDbModel(skiResortRemoteModelList: List<SkiResortRemoteModel>):
+        List<SkiResortLocalModel> {
+    return skiResortRemoteModelList.map {
+        SkiResortLocalModel(
                 it.skiResortId,
                 it.name,
                 it.country,
@@ -51,10 +53,10 @@ fun toDbModel(skiResortList: List<com.alexandre.skiresort.service.model.SkiResor
     }
 }
 
-fun toViewModelFromDb(skiResortList: List<com.alexandre.skiresort.db.model.SkiResort>):
-        List<SkiResort> {
-    return skiResortList.map {
-        SkiResort(
+fun toViewModelFromDb(skiResortLocalModelList: List<SkiResortLocalModel>):
+        List<SkiResortUiModel> {
+    return skiResortLocalModelList.map {
+        SkiResortUiModel(
                 it.skiResortId,
                 it.name,
                 it.country,

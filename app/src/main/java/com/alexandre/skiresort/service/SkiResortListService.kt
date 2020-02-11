@@ -1,7 +1,7 @@
 package com.alexandre.skiresort.service
 
 import com.alexandre.skiresort.BuildConfig
-import com.alexandre.skiresort.service.model.SkiResort
+import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,7 +14,7 @@ interface SkiResortListService{
      * Get ski resort list.
      */
     @GET("v0/b/ski-resort-be7dc.appspot.com/o/resort-weather.json?alt=media&token=f40092bf-2e06-4077-a84e-0906b834d487")
-    suspend fun getSkiResorts(): List<SkiResort>
+    suspend fun getSkiResorts(): List<SkiResortRemoteModel>
 
     companion object {
         private const val BASE_URL = "https://firebasestorage.googleapis.com/"

@@ -1,14 +1,15 @@
 package com.alexandre.skiresort.data
 
 import com.alexandre.skiresort.db.SkiResortDao
-import com.alexandre.skiresort.db.model.SkiResort
+import com.alexandre.skiresort.db.model.SkiResortLocalModel
 import com.alexandre.skiresort.domain.model.*
 import com.alexandre.skiresort.service.SkiResortListService
+import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 import kotlinx.coroutines.flow.*
 
 class SkiResortRepo(private val skiResortListService: SkiResortListService, private val skiResortDao: SkiResortDao) {
 
-    private fun getAllRemoteResorts(): Flow<List<com.alexandre.skiresort.service.model.SkiResort>> = flow {
+    private fun getAllRemoteResorts(): Flow<List<SkiResortRemoteModel>> = flow {
         emit(emptyList())
         try {
             val networkResult = skiResortListService.getSkiResorts()
@@ -19,13 +20,13 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
         }
     }
 
-    private fun getAllLocalSkiResort(): Flow<List<SkiResort>> = flow {
+    private fun getAllLocalSkiResort(): Flow<List<SkiResortLocalModel>> = flow {
         skiResortDao.getAllSkiResorts().collect { value ->
             emit(value)
         }
     }
 
-    fun getAllSkiResorts(): Flow<List<com.alexandre.skiresort.domain.model.SkiResort>> = flow {
+    fun getAllSkiResorts(): Flow<List<SkiResortUiModel>> = flow {
         getAllLocalSkiResort().combine(getAllRemoteResorts()) { local, remote ->
             toViewModel(remote, local)
         }.collect {
@@ -37,13 +38,13 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
         skiResortDao.updateFav(skiResortId, isFav)
     }
 
-    private suspend fun prepareInsertWithFavStatus(skiResorts: List<SkiResort>): List<SkiResort> {
-        val mutableIterator = skiResorts.iterator()
+    private suspend fun prepareInsertWithFavStatus(skiResortLocalModels: List<SkiResortLocalModel>): List<SkiResortLocalModel> {
+        val mutableIterator = skiResortLocalModels.iterator()
 
         // iterator() extension is called here
         for (skiResort in mutableIterator) {
             skiResort.isFav = skiResortDao.isFav(skiResort.skiResortId)
         }
-        return skiResorts
+        return skiResortLocalModels
     }
 }

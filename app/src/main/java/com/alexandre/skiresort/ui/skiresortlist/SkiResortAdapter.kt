@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.alexandre.skiresort.domain.model.SkiResort
+import com.alexandre.skiresort.domain.model.SkiResortUiModel
 
-class SkiResortAdapter(private val toggleFav: (View?, SkiResort) -> Unit) : ListAdapter<SkiResort, RecyclerView.ViewHolder>(SKI_RESORT_COMPARATOR) {
+class SkiResortAdapter(private val toggleFav: (View?, SkiResortUiModel) -> Unit) : ListAdapter<SkiResortUiModel, RecyclerView.ViewHolder>(SKI_RESORT_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return SkiResortViewHolder.create(parent)
@@ -22,11 +22,11 @@ class SkiResortAdapter(private val toggleFav: (View?, SkiResort) -> Unit) : List
 
 
     companion object {
-        private val SKI_RESORT_COMPARATOR = object : DiffUtil.ItemCallback<SkiResort>() {
-            override fun areItemsTheSame(oldItem: SkiResort, newItem: SkiResort): Boolean =
+        private val SKI_RESORT_COMPARATOR = object : DiffUtil.ItemCallback<SkiResortUiModel>() {
+            override fun areItemsTheSame(oldItem: SkiResortUiModel, newItem: SkiResortUiModel): Boolean =
                     oldItem.skiResortId == newItem.skiResortId
 
-            override fun areContentsTheSame(oldItem: SkiResort, newItem: SkiResort): Boolean =
+            override fun areContentsTheSame(oldItem: SkiResortUiModel, newItem: SkiResortUiModel): Boolean =
                     oldItem == newItem
         }
     }

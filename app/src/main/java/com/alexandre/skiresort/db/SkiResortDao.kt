@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.alexandre.skiresort.db.model.SkiResort
+import com.alexandre.skiresort.db.model.SkiResortLocalModel
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -15,11 +15,11 @@ interface SkiResortDao{
 
     //Add a list of ski resorts
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(skiResortList: List<SkiResort>)
+    suspend fun insertAll(skiResortLocalModelList: List<SkiResortLocalModel>)
 
     //Get all the ski resorts
     @Query("SELECT skiResortId, name, country, mountainRange, slopeKm, lifts, slopes, isFav FROM ski_resorts")
-    fun getAllSkiResorts(): Flow<List<SkiResort>>
+    fun getAllSkiResorts(): Flow<List<SkiResortLocalModel>>
 
     @Query("UPDATE ski_resorts SET isFav = :isFav WHERE skiResortId = :skiResortId")
     suspend fun updateFav(skiResortId : Int, isFav : Boolean)

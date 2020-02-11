@@ -1,7 +1,6 @@
 package com.alexandre.skiresort.ui.skiresortlist
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -9,15 +8,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alexandre.skiresort.Injection.provideViewModelFactorySkiResortList
 import com.alexandre.skiresort.R
-import com.alexandre.skiresort.domain.model.SkiResort
+import com.alexandre.skiresort.domain.model.SkiResortUiModel
 import kotlinx.android.synthetic.main.activity_ski_resort_list.*
 
 class SkiResortListActivity : AppCompatActivity() {
 
     private lateinit var viewModelSkiResortList: SkiResortListViewModel
 
-    private var adapter = SkiResortAdapter { view: View?, skiResort: SkiResort ->
-        viewModelSkiResortList.toggleFav(skiResort)
+    private var adapter = SkiResortAdapter { view: View?, skiResortUiModel: SkiResortUiModel ->
+        viewModelSkiResortList.toggleFav(skiResortUiModel)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +36,7 @@ class SkiResortListActivity : AppCompatActivity() {
         /**
          * Observe changes in the list of ski resort
          */
-        viewModelSkiResortList.skiResortList.observe(this, Observer<List<SkiResort>> {
+        viewModelSkiResortList.skiResortUiModelList.observe(this, Observer<List<SkiResortUiModel>> {
             adapter.submitList(it)
         })
     }

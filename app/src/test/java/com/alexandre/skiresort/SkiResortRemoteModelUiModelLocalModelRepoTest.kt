@@ -3,8 +3,10 @@ package com.alexandre.skiresort
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.alexandre.skiresort.data.SkiResortRepo
 import com.alexandre.skiresort.db.SkiResortDao
-import com.alexandre.skiresort.db.model.SkiResort
+import com.alexandre.skiresort.db.model.SkiResortLocalModel
+import com.alexandre.skiresort.domain.model.SkiResortUiModel
 import com.alexandre.skiresort.service.SkiResortListService
+import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 import io.mockk.*
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -15,7 +17,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 
-class SkiResortRepoTest {
+class SkiResortRemoteModelUiModelLocalModelRepoTest {
 
     private val skiResortDao = mockkClass(SkiResortDao::class)
     private val skiResortListService = mockkClass(SkiResortListService::class)
@@ -47,7 +49,7 @@ class SkiResortRepoTest {
     }
 
     private fun createExpectedResultFirst() =
-            listOf(com.alexandre.skiresort.domain.model.SkiResort(
+            listOf(SkiResortUiModel(
                     1,
                     "Val d'Isère",
                     "France",
@@ -59,7 +61,7 @@ class SkiResortRepoTest {
                     null))
 
     private fun createExpectedResultSecond() =
-            listOf(com.alexandre.skiresort.domain.model.SkiResort(
+            listOf(SkiResortUiModel(
                     1,
                     "Val d'Isère",
                     "France",
@@ -71,7 +73,7 @@ class SkiResortRepoTest {
                     R.drawable.ic_wb_sunny))
 
     private fun createExpectedDbData() =
-            listOf(SkiResort(
+            listOf(SkiResortLocalModel(
                     1,
                     "Val d'Isère",
                     "France",
@@ -82,7 +84,7 @@ class SkiResortRepoTest {
                     true))
 
     private fun createExpectedRemoteData() =
-            listOf(com.alexandre.skiresort.service.model.SkiResort(1,
+            listOf(SkiResortRemoteModel(1,
                     "Val d'Isère",
                     "France",
                     "Alps",
