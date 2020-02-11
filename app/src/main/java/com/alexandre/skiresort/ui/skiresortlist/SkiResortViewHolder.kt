@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.alexandre.skiresort.R
-import com.alexandre.skiresort.domain.model.SkiResort
+import com.alexandre.skiresort.domain.model.SkiResortUiModel
 
 class SkiResortViewHolder(view: View)  : RecyclerView.ViewHolder(view) {
     private val skiResortName: TextView = view.findViewById(R.id.skiResortName)
@@ -19,14 +19,14 @@ class SkiResortViewHolder(view: View)  : RecyclerView.ViewHolder(view) {
     private val favoriteIV: ImageView = view.findViewById(R.id.favoriteIV)
     private val weatherIV: ImageView = view.findViewById(R.id.weatherIV)
 
-    fun bind(skiResort: SkiResort?, toggleFav: (View?, SkiResort) -> Unit) {
-        if (skiResort != null) {
-            showSkiResortData(skiResort, toggleFav)
+    fun bind(skiResortUiModel: SkiResortUiModel?, toggleFav: (View?, SkiResortUiModel) -> Unit) {
+        if (skiResortUiModel != null) {
+            showSkiResortData(skiResortUiModel, toggleFav)
         }
     }
 
-    private fun showSkiResortData(skiResort: SkiResort, toggleFav: (View?, SkiResort) -> Unit) {
-        skiResort.apply {
+    private fun showSkiResortData(skiResortUiModel: SkiResortUiModel, toggleFav: (View?, SkiResortUiModel) -> Unit) {
+        skiResortUiModel.apply {
             skiResortName.text = name
             skiResortCountry.text = country
             skiResortMountain.text = mountainRange
@@ -40,7 +40,7 @@ class SkiResortViewHolder(view: View)  : RecyclerView.ViewHolder(view) {
                 favoriteIV.setImageResource(R.drawable.ic_star_border_black_24dp)
             }
             favoriteIV.setOnClickListener{
-                toggleFav(it, skiResort)
+                toggleFav(it, skiResortUiModel)
             }
             weather?.let {
                 weatherIV.setImageResource(it)

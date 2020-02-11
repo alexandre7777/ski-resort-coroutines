@@ -10,7 +10,7 @@ import org.junit.Assert.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class SkiResortConvertorTest {
+class SkiResortRemoteModelUiModelLocalModelConvertorTest {
 
     @Test
     fun getDrawableForString_sunny() {

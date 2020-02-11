@@ -1,17 +1,21 @@
 package com.alexandre.skiresort.ui.skiresortlist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.alexandre.skiresort.data.SkiResortRepo
-import com.alexandre.skiresort.domain.model.SkiResort
+import com.alexandre.skiresort.domain.model.SkiResortUiModel
+import kotlinx.coroutines.launch
 
 class SkiResortListViewModel(private val skiResortRepo: SkiResortRepo) : ViewModel() {
 
     //list of all the ski resorts
-    val skiResortList : LiveData<List<SkiResort>> = skiResortRepo.getAllSkiResorts()
+    val skiResortUiModelList: LiveData<List<SkiResortUiModel>> =
+        skiResortRepo.getAllSkiResorts().asLiveData()
+
 
     //change the fav value
-    fun toggleFav(skiResort: SkiResort) {
-        skiResortRepo.updateSkiResortFav(skiResort.skiResortId, !skiResort.isFav)
+    fun toggleFav(skiResortUiModel: SkiResortUiModel) {
+        viewModelScope.launch {
+            skiResortRepo.updateSkiResortFav(skiResortUiModel.skiResortId, !skiResortUiModel.isFav)
+        }
     }
 }

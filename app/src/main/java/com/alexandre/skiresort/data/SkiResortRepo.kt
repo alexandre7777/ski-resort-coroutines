@@ -1,67 +1,50 @@
 package com.alexandre.skiresort.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.alexandre.skiresort.db.SkiResortDao
-import com.alexandre.skiresort.db.model.SkiResort
-import com.alexandre.skiresort.domain.model.toDbModel
-import com.alexandre.skiresort.domain.model.toViewModel
-import com.alexandre.skiresort.domain.model.toViewModelFromDb
+import com.alexandre.skiresort.db.model.SkiResortLocalModel
+import com.alexandre.skiresort.domain.model.*
 import com.alexandre.skiresort.service.SkiResortListService
-import com.alexandre.skiresort.service.requestSkiResort
-import java.util.concurrent.Executor
+import com.alexandre.skiresort.service.model.SkiResortRemoteModel
+import kotlinx.coroutines.flow.*
 
-class SkiResortRepo(private val skiResortListService: SkiResortListService, private val skiResortDao: SkiResortDao, private val ioExecutor: Executor) {
+class SkiResortRepo(private val skiResortListService: SkiResortListService, private val skiResortDao: SkiResortDao) {
 
-    fun getAllSkiResorts(): LiveData<List<com.alexandre.skiresort.domain.model.SkiResort>> {
+    private fun getAllRemoteResorts(): Flow<List<SkiResortRemoteModel>> = flow {
+        emit(emptyList())
+        try {
+            val networkResult = skiResortListService.getSkiResorts()
+            emit(networkResult)
+            skiResortDao.insertAll(prepareInsertWithFavStatus(toDbModel(networkResult)))
+        } catch (throwable: Throwable) {
 
-        val result = MediatorLiveData<List<com.alexandre.skiresort.domain.model.SkiResort>>()
-
-        val liveDataService = requestSkiResort(skiResortListService, { skiResorts ->
-            ioExecutor.execute {
-                skiResortDao.insertAll(prepareInsertWithFavStatus(toDbModel(skiResorts)))
-            }
-        }, { error ->
-
-        })
-
-        val liveDataDb = skiResortDao.getAllSkiResorts()
-
-        result.addSource(liveDataService) { value ->
-            value?.let {
-                liveDataDb.value?.let { it2 ->
-                    result.value = toViewModel(it, it2)
-                } ?: run {
-                    result.value = toViewModel(it)
-                }
-            }
-            //combineLatestData(liveData1, liveData2)
-        }
-        result.addSource(liveDataDb) { value ->
-            value?.let {
-                liveDataService.value?.let { it2 ->
-                    result.value = toViewModel(it2, it)
-                }?: run {
-                    result.value = toViewModelFromDb(it)
-                }
-            }
-        }
-        return result
-    }
-
-    fun updateSkiResortFav(skiResortId: Int, isFav: Boolean) {
-        ioExecutor.execute {
-            skiResortDao.updateFav(skiResortId, isFav)
         }
     }
 
-    private fun prepareInsertWithFavStatus(skiResorts : List<SkiResort>): List<SkiResort> {
-        val mutableIterator = skiResorts.iterator()
+    private fun getAllLocalSkiResort(): Flow<List<SkiResortLocalModel>> = flow {
+        skiResortDao.getAllSkiResorts().collect { value ->
+            emit(value)
+        }
+    }
+
+    fun getAllSkiResorts(): Flow<List<SkiResortUiModel>> = flow {
+        getAllLocalSkiResort().combine(getAllRemoteResorts()) { local, remote ->
+            toViewModel(remote, local)
+        }.collect {
+            emit(it)
+        }
+    }
+
+    suspend fun updateSkiResortFav(skiResortId: Int, isFav: Boolean) {
+        skiResortDao.updateFav(skiResortId, isFav)
+    }
+
+    private suspend fun prepareInsertWithFavStatus(skiResortLocalModels: List<SkiResortLocalModel>): List<SkiResortLocalModel> {
+        val mutableIterator = skiResortLocalModels.iterator()
 
         // iterator() extension is called here
         for (skiResort in mutableIterator) {
             skiResort.isFav = skiResortDao.isFav(skiResort.skiResortId)
         }
-        return skiResorts
+        return skiResortLocalModels
     }
 }
