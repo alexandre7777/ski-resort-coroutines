@@ -20,18 +20,9 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
         }
     }
 
-    private fun getAllLocalSkiResort(): Flow<List<SkiResortLocalModel>> = flow {
-        skiResortDao.getAllSkiResorts().collect { value ->
-            emit(value)
-        }
-    }
-
-    fun getAllSkiResorts(): Flow<List<SkiResortUiModel>> = flow {
-        getAllLocalSkiResort().combine(getAllRemoteResorts()) { local, remote ->
-            toViewModel(remote, local)
-        }.collect {
-            emit(it)
-        }
+    fun getAllSkiResorts(): Flow<List<SkiResortUiModel>> =
+        skiResortDao.getAllSkiResorts().combine(getAllRemoteResorts()) { local, remote ->
+            toViewModel(local, remote)
     }
 
     suspend fun updateSkiResortFav(skiResortId: Int, isFav: Boolean) {
