@@ -9,7 +9,7 @@ class SkiResortListViewModel(private val skiResortRepo: SkiResortRepo) : ViewMod
 
     //list of all the ski resorts
     val skiResortUiModelList: LiveData<List<SkiResortUiModel>> =
-        skiResortRepo.getAllSkiResorts().asLiveData()
+        skiResortRepo.getAllSkiResorts().asLiveData(viewModelScope.coroutineContext)
 
 
     //change the fav value
