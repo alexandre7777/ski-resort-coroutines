@@ -4,11 +4,11 @@ import com.alexandre.skiresort.R
 import com.alexandre.skiresort.db.model.SkiResortLocalModel
 import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 
-fun toViewModel(skiResortLocalModelListDb: List<SkiResortLocalModel>,
-                skiResortRemoteModelListService: List<SkiResortRemoteModel>):
+fun toUiModel(skiResortLocalModelListDb: List<SkiResortLocalModel>,
+              skiResortRemoteModelListService: List<SkiResortRemoteModel>):
         List<SkiResortUiModel> {
     return if (skiResortRemoteModelListService.isEmpty()) {
-        toViewModelFromDb(skiResortLocalModelListDb)
+        toUiModelFromDb(skiResortLocalModelListDb)
     } else {
         skiResortRemoteModelListService.map {
             SkiResortUiModel(
@@ -53,7 +53,7 @@ fun toDbModel(skiResortRemoteModelList: List<SkiResortRemoteModel>):
     }
 }
 
-fun toViewModelFromDb(skiResortLocalModelList: List<SkiResortLocalModel>):
+fun toUiModelFromDb(skiResortLocalModelList: List<SkiResortLocalModel>):
         List<SkiResortUiModel> {
     return skiResortLocalModelList.map {
         SkiResortUiModel(
