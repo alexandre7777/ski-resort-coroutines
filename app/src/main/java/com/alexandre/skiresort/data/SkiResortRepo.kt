@@ -22,7 +22,7 @@ class SkiResortRepo(private val skiResortListService: SkiResortListService, priv
 
     fun getAllSkiResorts(): Flow<List<SkiResortUiModel>> =
         skiResortDao.getAllSkiResorts().combine(getAllRemoteResorts()) { local, remote ->
-            toViewModel(remote, local)
+            toViewModel(local, remote)
     }
 
     suspend fun updateSkiResortFav(skiResortId: Int, isFav: Boolean) {

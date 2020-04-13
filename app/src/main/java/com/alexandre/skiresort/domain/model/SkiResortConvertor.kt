@@ -4,8 +4,8 @@ import com.alexandre.skiresort.R
 import com.alexandre.skiresort.db.model.SkiResortLocalModel
 import com.alexandre.skiresort.service.model.SkiResortRemoteModel
 
-fun toViewModel(skiResortRemoteModelListService: List<SkiResortRemoteModel>,
-                skiResortLocalModelListDb: List<SkiResortLocalModel>):
+fun toViewModel(skiResortLocalModelListDb: List<SkiResortLocalModel>,
+                skiResortRemoteModelListService: List<SkiResortRemoteModel>):
         List<SkiResortUiModel> {
     return if (skiResortRemoteModelListService.isEmpty()) {
         toViewModelFromDb(skiResortLocalModelListDb)
